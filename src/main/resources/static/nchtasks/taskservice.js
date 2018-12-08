@@ -17,6 +17,7 @@ function addTask(task) {
         <td>${task.title}</td>
         <td>${task.description}</td>
         <td>${task.assignedUserId}</td>
+        <td>${task.createdDate }</td>
         <td>
             <button onclick="deleteTask(${task.id})">Delete</button>
             <a href="/nchtasks/editTask.html?taskId=${task.id}">Edit</a>

@@ -91,9 +91,11 @@ public class Task {
     public void setAssignedUserId(Long assignedUserId) {
         this.assignedUserId = assignedUserId;
     }
+
     public Date getCreatedDate() {
         return createdDate;
     }
+
     public void setCreatedDate(Date createdDate) {
         this.createdDate = createdDate;
     }
