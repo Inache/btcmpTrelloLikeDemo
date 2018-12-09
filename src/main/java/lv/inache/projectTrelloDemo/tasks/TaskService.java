@@ -6,16 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class TaskService {
-    private final UserService userService;
     private final TasksDAOImplementation tasksDAO;
 
     @Autowired
-    public TaskService(UserService userService, TasksDAOImplementation tasksDAO) {
-        this.userService = userService;
+    public TaskService(TasksDAOImplementation tasksDAO) {
         this.tasksDAO = tasksDAO;
     }
 
@@ -33,30 +30,12 @@ public class TaskService {
         return false;
     }
 
-    public List<TaskView> get() {
-        return tasksDAO.getAll().stream().map(this::mapToTaskView).collect(Collectors.toList());
+    public List<Task> get() {
+        return tasksDAO.getAll();
     }
 
-    public TaskView get(Long id) {
-        Optional<Task> task = tasksDAO.getById(id);
-
-        if (task.isPresent()) {
-            return mapToTaskView(task.get());
-        } else {
-            return null;
-        }
-    }
-
-    private TaskView mapToTaskView(Task task) {
-        User user = userService.get(task.getAssignedUserId());
-
-        return new TaskView(
-                task.getId(),
-                task.getTitle(),
-                task.getDescription(),
-                task.getAssignedUserId(),
-                task.getCreatedDate(),
-                user == null ? null : user.getName() + " " + user.getLastName());
+    public Optional<Task> get(Long id) {
+        return tasksDAO.getById(id);
     }
 
     public boolean update(Task newTask) {
@@ -65,16 +44,6 @@ public class TaskService {
     }
 
     public boolean assign(Long taskId, Long userId) {
-        Optional<Task> task = tasksDAO.getById(taskId);
-
-        if (task.isPresent()) {
-            Task unwrapped = task.get();
-            unwrapped.setAssignedUserId(userId);
-
-            tasksDAO.update(unwrapped);
-            return true;
-        } else {
-            return false;
-        }
+        return false;
     }
 }

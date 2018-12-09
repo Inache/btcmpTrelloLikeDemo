@@ -10,49 +10,66 @@ import java.util.Optional;
 
 public abstract class BaseDAOImplementation<T> implements BaseDAO<T> {
     private final SessionFactory sessionFactory;
+
     protected BaseDAOImplementation(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
+
     @Override
     public List<T> getAll(Class<T> clazz) {
         Session session = sessionFactory.openSession();
+
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<T> query = builder.createQuery(clazz);
         query.select(query.from(clazz));
-        List<T> tasks = session.createQuery(query).getResultList();
-        session.close();
-        return tasks;
+
+        List<T> rows = session.createQuery(query).getResultList();
+//        session.close();
+        return rows;
     }
+
     @Override
     public Optional<T> getById(Long id, Class<T> clazz) {
         Session session = sessionFactory.openSession();
+
         T obj = session.get(clazz, id);
+
         session.close();
         return Optional.ofNullable(obj);
     }
+
     @Override
     public Long insert(T obj) {
         Session session = sessionFactory.openSession();
         Transaction tx = session.beginTransaction();
+
         Long id = (Long) session.save(obj);
+
         tx.commit();
         session.close();
+
         return id;
     }
+
     @Override
     public void delete(Long id, Class<T> clazz) {
         Session session = sessionFactory.openSession();
         Transaction tx = session.beginTransaction();
+
         T obj = this.getById(id, clazz).get();
         session.delete(obj);
+
         tx.commit();
         session.close();
     }
+
     @Override
     public void update(T obj) {
         Session session = sessionFactory.openSession();
         Transaction tx = session.beginTransaction();
+
         session.update(obj);
+
         tx.commit();
         session.close();
     }

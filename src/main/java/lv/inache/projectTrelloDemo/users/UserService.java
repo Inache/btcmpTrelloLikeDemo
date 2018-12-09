@@ -1,38 +1,38 @@
 package lv.inache.projectTrelloDemo.users;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 
 @Component
 public class UserService {
-    private Map<Long, User> userMap = new HashMap<>();
-    private Long lastId = 0L;
+    private final UsersDAOImplementation usersDAOImplementation;
+    @Autowired
+    public UserService(UsersDAOImplementation usersDAOImplementation) {
+        this.usersDAOImplementation = usersDAOImplementation;
+    }
 
     public Long add(User user) {
-        lastId++;
-        user.setId(lastId);
-        userMap.put(lastId, user);
-        return lastId;
+        return usersDAOImplementation.insert(user);
     }
 
-    public boolean userExists(Long id) {
-        return userMap.containsKey(id);
-    }
 
     public List<User> users() {
-        return new ArrayList<>(userMap.values());
+        List<User> users = usersDAOImplementation.getAll();
+        return users;
     }
 
-    public User get(Long id) {
-        return userMap.get(id);
+    public Optional<User> get(Long id) {
+        return usersDAOImplementation.getById(id);
     }
 
     public void delete (Long id) {
-        userMap.remove(id);
+        usersDAOImplementation.delete(id);
     }
 
     public void update(Long id, User u) {
-        userMap.replace(id, u);
+        u.setId(id);
+        usersDAOImplementation.update(u);
     }
 }
